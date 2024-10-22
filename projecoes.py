@@ -15,6 +15,7 @@ def bresenham_line(x1, y1, x2, y2, canvas, color="red"):
     err = dx - dy
 
     while True:
+        # Desenhar quadrado colorido no canvas (20x20 pixels para cada coordenada)
         canvas.create_rectangle(x1 * 20, y1 * 20, (x1 + 1) * 20, (y1 + 1) * 20, fill=color)
         if x1 == x2 and y1 == y2:
             break
@@ -26,61 +27,66 @@ def bresenham_line(x1, y1, x2, y2, canvas, color="red"):
             err += dx
             y1 += sy
 
-# Projeção ortogonal: z é ignorado, projetamos no plano XY
-def ortho_projection(vertices):
-    projected = [(x, y) for x, y, z in vertices]
-    return projected
-
-# Projeção oblíqua: usando um ângulo típico de 45 graus para z
-def oblique_projection(vertices, theta=45):
-    theta = math.radians(theta)
-    projected = [(x + z * math.cos(theta), y + z * math.sin(theta)) for x, y, z in vertices]
-    return projected
-
-# Projeção de perspectiva: assumindo uma distância do observador
-def perspective_projection(vertices, d=5):
-    projected = [(x / (1 + z / d), y / (1 + z / d)) for x, y, z in vertices]
-    return projected
-
-# Função para desenhar o objeto projetado no canvas
-def draw_projected_object(vertices, edges, canvas, color="blue"):
-    canvas.delete("all")
-    draw_grid(canvas)
-    
-    for edge in edges:
-        x1, y1 = vertices[edge[0]]
-        x2, y2 = vertices[edge[1]]
+# Função para desenhar o polígono com os vértices especificados, usando Bresenham para as arestas
+def draw_polygon(vertices, canvas, color="blue"):
+    for i in range(len(vertices)):
+        x1, y1 = vertices[i]
+        x2, y2 = vertices[(i + 1) % len(vertices)]
         bresenham_line(round(x1), round(y1), round(x2), round(y2), canvas, color)
 
-# Função para capturar as coordenadas e desenhar o polígono
-def draw_polygon():
+# Função para capturar as coordenadas dos vértices fornecidos (em 3D)
+def get_polygon_coordinates_3d():
     try:
-        # Capturar as coordenadas inseridas pelo usuário
-        vertices_3d = []
-        for i in range(0, len(vertex_entries), 3):
-            x = int(vertex_entries[i].get())
-            y = int(vertex_entries[i + 1].get())
-            z = int(vertex_entries[i + 2].get())
-            vertices_3d.append((x, y, z))
-        
-        # Definir arestas (conectando os vértices em sequência)
-        edges = [(i, (i + 1) % len(vertices_3d)) for i in range(len(vertices_3d))]
-
-        # Escolher a projeção
-        projection_type = projection_var.get()
-        if projection_type == "ortho":
-            vertices_2d = ortho_projection(vertices_3d)
-        elif projection_type == "oblique":
-            vertices_2d = oblique_projection(vertices_3d)
-        elif projection_type == "perspective":
-            vertices_2d = perspective_projection(vertices_3d)
-
-        # Desenhar o polígono projetado
-        draw_projected_object(vertices_2d, edges, canvas)
+        coords = entry_polygon.get().split(';')  # Pega as coordenadas separadas por ";"
+        vertices = []
+        for coord in coords:
+            x, y, z = map(int, coord.split(','))
+            vertices.append((x, y, z))
+        return vertices
     except ValueError:
-        pass  # Ignorar entradas inválidas
+        return []
 
-# Função para desenhar a grade
+# Projeção Ortogonal: descarta a coordenada z
+def orthogonal_projection(vertices):
+    projected_vertices = [(x, y) for x, y, z in vertices]
+    return projected_vertices
+
+# Projeção Oblíqua: inclui uma distorção proporcional ao valor de z
+def oblique_projection(vertices, alpha=45, l=0.5):
+    angle_radians = math.radians(alpha)
+    projected_vertices = [(x + l * z * math.cos(angle_radians), y + l * z * math.sin(angle_radians)) for x, y, z in vertices]
+    return projected_vertices
+
+# Projeção em Perspectiva: aplica a redução baseada na profundidade (z)
+def perspective_projection(vertices, d=500):
+    projected_vertices = [(x * d / (d + z), y * d / (d + z)) for x, y, z in vertices]
+    return projected_vertices
+
+# Função para desenhar a projeção ortogonal
+def draw_orthogonal():
+    canvas.delete("all")  # Limpar o canvas
+    draw_grid(canvas)  # Redesenha a grade
+    vertices = get_polygon_coordinates_3d()
+    ortho_vertices = orthogonal_projection(vertices)
+    draw_polygon(ortho_vertices, canvas, "blue")
+
+# Função para desenhar a projeção oblíqua
+def draw_oblique():
+    canvas.delete("all")  # Limpar o canvas
+    draw_grid(canvas)  # Redesenha a grade
+    vertices = get_polygon_coordinates_3d()
+    oblique_vertices = oblique_projection(vertices)
+    draw_polygon(oblique_vertices, canvas, "green")
+
+# Função para desenhar a projeção em perspectiva
+def draw_perspective():
+    canvas.delete("all")  # Limpar o canvas
+    draw_grid(canvas)  # Redesenha a grade
+    vertices = get_polygon_coordinates_3d()
+    perspective_vertices = perspective_projection(vertices)
+    draw_polygon(perspective_vertices, canvas, "red")
+
+# Função para desenhar a grade e os eixos
 def draw_grid(canvas):
     canvas.create_line(0, 220, 440, 220, fill="gray")  # Eixo X
     canvas.create_line(220, 0, 220, 440, fill="gray")  # Eixo Y
@@ -90,35 +96,30 @@ def draw_grid(canvas):
 
 # Interface principal
 root = tk.Tk()
-root.title("Projeções 3D (Orto, Oblíqua, Perspectiva)")
+root.title("Projeções 3D com Bresenham")
 
-# Seletor de projeção
-projection_var = tk.StringVar(value="ortho")
-tk.Radiobutton(root, text="Ortogonal", variable=projection_var, value="ortho").grid(row=0, column=0)
-tk.Radiobutton(root, text="Oblíqua", variable=projection_var, value="oblique").grid(row=0, column=1)
-tk.Radiobutton(root, text="Perspectiva", variable=projection_var, value="perspective").grid(row=0, column=2)
+# Entrada de coordenadas do polígono (x, y, z)
+tk.Label(root, text="Polígono (x,y,z;x,y,z;...):").grid(row=0, column=0)
+entry_polygon = tk.Entry(root)
+entry_polygon.grid(row=0, column=1, columnspan=3)
 
-# Lista de entradas de vértices
-vertex_entries = []
-for i in range(5):  # Vamos começar com 5 vértices, você pode ajustar isso
-    tk.Label(root, text=f"Vértice {i+1} (x, y, z):").grid(row=i+1, column=0)
-    entry_x = tk.Entry(root, width=5)
-    entry_y = tk.Entry(root, width=5)
-    entry_z = tk.Entry(root, width=5)
-    entry_x.grid(row=i+1, column=1)
-    entry_y.grid(row=i+1, column=2)
-    entry_z.grid(row=i+1, column=3)
-    vertex_entries.extend([entry_x, entry_y, entry_z])
+# Botão para desenhar projeção ortogonal
+ortho_button = tk.Button(root, text="Projeção Ortogonal", command=draw_orthogonal)
+ortho_button.grid(row=1, column=0)
 
-# Botão para desenhar o polígono
-draw_button = tk.Button(root, text="Desenhar Polígono", command=draw_polygon)
-draw_button.grid(row=6, column=1)
+# Botão para desenhar projeção oblíqua
+oblique_button = tk.Button(root, text="Projeção Oblíqua", command=draw_oblique)
+oblique_button.grid(row=1, column=1)
 
-# Canvas para desenhar
+# Botão para desenhar projeção em perspectiva
+perspective_button = tk.Button(root, text="Projeção Perspectiva", command=draw_perspective)
+perspective_button.grid(row=1, column=2)
+
+# Canvas para desenhar o polígono e as transformações
 canvas = tk.Canvas(root, width=440, height=440, bg="white")
-canvas.grid(row=7, column=0, columnspan=4)
+canvas.grid(row=2, column=0, columnspan=4)
 
-# Desenhar a grade inicial
+# Desenhar a grade e os eixos iniciais
 draw_grid(canvas)
 
 root.mainloop()
