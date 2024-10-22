@@ -40,7 +40,7 @@ def get_polygon_coordinates_3d():
         coords = entry_polygon.get().split(';')  # Pega as coordenadas separadas por ";"
         vertices = []
         for coord in coords:
-            x, y, z = map(float, coord.split(','))
+            x, y, z = map(int, coord.split(','))
             vertices.append((x, y, z))
         return vertices
     except ValueError:
@@ -59,7 +59,7 @@ def oblique_projection(vertices, alpha=45, l=0.5):
 
 # Projeção em Perspectiva: aplica a redução baseada na profundidade (z)
 def perspective_projection(vertices, d=500):
-    projected_vertices = [(x * d / (d + z), y * d / (d + z)) for x, y, z in vertices if (d + z) != 0]
+    projected_vertices = [(x * d / (d + z), y * d / (d + z)) for x, y, z in vertices]
     return projected_vertices
 
 # Função para desenhar a projeção ortogonal
@@ -67,27 +67,24 @@ def draw_orthogonal():
     canvas.delete("all")  # Limpar o canvas
     draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
-    if vertices:
-        ortho_vertices = orthogonal_projection(vertices)
-        draw_polygon(ortho_vertices, canvas, "blue")
+    ortho_vertices = orthogonal_projection(vertices)
+    draw_polygon(ortho_vertices, canvas, "blue")
 
 # Função para desenhar a projeção oblíqua
 def draw_oblique():
     canvas.delete("all")  # Limpar o canvas
     draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
-    if vertices:
-        oblique_vertices = oblique_projection(vertices)
-        draw_polygon(oblique_vertices, canvas, "green")
+    oblique_vertices = oblique_projection(vertices)
+    draw_polygon(oblique_vertices, canvas, "green")
 
 # Função para desenhar a projeção em perspectiva
 def draw_perspective():
     canvas.delete("all")  # Limpar o canvas
     draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
-    if vertices:
-        perspective_vertices = perspective_projection(vertices)
-        draw_polygon(perspective_vertices, canvas, "red")
+    perspective_vertices = perspective_projection(vertices)
+    draw_polygon(perspective_vertices, canvas, "red")
 
 # Função para desenhar a grade e os eixos
 def draw_grid(canvas):
