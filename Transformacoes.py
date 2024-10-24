@@ -1,31 +1,6 @@
 import tkinter as tk
 import math
-
-# Função do Algoritmo de Bresenham para desenhar uma linha com quadrados coloridos
-def bresenham_line(x1, y1, x2, y2, canvas, color="red"):
-    x1 = x1 + 11
-    y1 = 11 - y1
-    x2 = x2 + 11
-    y2 = 11 - y2
-
-    dx = abs(x2 - x1)
-    dy = abs(y2 - y1)
-    sx = 1 if x1 < x2 else -1
-    sy = 1 if y1 < y2 else -1
-    err = dx - dy
-
-    while True:
-        # Desenhar quadrado colorido no canvas (20x20 pixels para cada coordenada)
-        canvas.create_rectangle(x1 * 20, y1 * 20, (x1 + 1) * 20, (y1 + 1) * 20, fill=color)
-        if x1 == x2 and y1 == y2:
-            break
-        e2 = 2 * err
-        if e2 > -dy:
-            err -= dy
-            x1 += sx
-        if e2 < dx:
-            err += dx
-            y1 += sy
+from Bresenham import bresenham as bs
 
 # Função para desenhar o polígono com os vértices especificados, usando Bresenham para as arestas
 def draw_polygon(vertices, canvas, color="blue"):
@@ -34,7 +9,7 @@ def draw_polygon(vertices, canvas, color="blue"):
     for i in range(len(vertices)):
         x1, y1 = vertices[i]
         x2, y2 = vertices[(i + 1) % len(vertices)]
-        bresenham_line(round(x1), round(y1), round(x2), round(y2), canvas, color)
+        bs.bresenham_line(round(x1), round(y1), round(x2), round(y2), canvas, color)
 
 # Função para capturar as coordenadas dos vértices fornecidos
 def get_polygon_coordinates():

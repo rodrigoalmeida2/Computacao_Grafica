@@ -1,24 +1,5 @@
 import tkinter as tk
-
-# Algoritmo de Bresenham para desenhar linhas
-def bresenham(x0, y0, x1, y1, canvas):
-    dx = abs(x1 - x0)
-    dy = abs(y1 - y0)
-    sx = 1 if x0 < x1 else -1
-    sy = 1 if y0 < y1 else -1
-    err = dx - dy
-
-    while True:
-        canvas.create_rectangle(x0 * 20, y0 * 20, (x0 + 1) * 20, (y0 + 1) * 20, fill="red")
-        if x0 == x1 and y0 == y1:
-            break
-        e2 = 2 * err
-        if e2 > -dy:
-            err -= dy
-            x0 += sx
-        if e2 < dx:
-            err += dx
-            y0 += sy
+from Bresenham import bresenham as bs
 
 # Função para desenhar o polígono usando bresenham
 def draw_polygon():
@@ -33,7 +14,7 @@ def draw_polygon():
         for i in range(len(points)):
             x0, y0 = points[i]
             x1, y1 = points[(i + 1) % len(points)]  # Para fechar o polígono
-            bresenham(x0, y0, x1, y1, canvas)
+            bs.bresenham(x0, y0, x1, y1, canvas)
     except ValueError:
         pass  # Ignorar entradas inválidas
 
