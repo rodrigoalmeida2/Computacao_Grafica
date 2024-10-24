@@ -4,6 +4,12 @@ import numpy as np
 
 # Função do Algoritmo de Bresenham para desenhar uma linha com quadrados coloridos
 def bresenham_line(x1, y1, x2, y2, canvas):
+    # Conversão para as coordenadas do canvas (considera 11 x 11 quadrantes com centro em (0, 0))
+    x1 = x1 + 11
+    y1 = 11 - y1
+    x2 = x2 + 11
+    y2 = 11 - y2
+
     dx = abs(x2 - x1)
     dy = abs(y2 - y1)
     sx = 1 if x1 < x2 else -1
@@ -12,7 +18,7 @@ def bresenham_line(x1, y1, x2, y2, canvas):
 
     while True:
         # Desenhar quadrado colorido no canvas (20x20 pixels para cada coordenada)
-        canvas.create_rectangle(x1 * 20, y1 * 20, (x1 + 1) * 20, (y1 + 1) * 20, fill="black")
+        canvas.create_rectangle(x1 * 20, y1 * 20, (x1 + 1) * 20, (y1 + 1) * 20, fill="red")
         if x1 == x2 and y1 == y2:
             break
         e2 = 2 * err
