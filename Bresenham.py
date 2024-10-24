@@ -1,32 +1,34 @@
 import tkinter as tk
 
-# Função do Algoritmo de Bresenham para desenhar uma linha com quadrados coloridos
-def bresenham_line(x1, y1, x2, y2, canvas):
-    # Conversão para as coordenadas do canvas (considera 11 x 11 quadrantes com centro em (0, 0))
-    x1 = x1 + 11
-    y1 = 11 - y1
-    x2 = x2 + 11
-    y2 = 11 - y2
+class bresenham:
+    # Função do Algoritmo de Bresenham para desenhar uma linha com quadrados coloridos
+    def bresenham_line(x1, y1, x2, y2, canvas):
+        # Conversão para as coordenadas do canvas (considera 11 x 11 quadrantes com centro em (0, 0))
+        x1 = x1 + 11
+        y1 = 11 - y1
+        x2 = x2 + 11
+        y2 = 11 - y2
 
-    dx = abs(x2 - x1)
-    dy = abs(y2 - y1)
-    sx = 1 if x1 < x2 else -1
-    sy = 1 if y1 < y2 else -1
-    err = dx - dy
+        dx = abs(x2 - x1)
+        dy = abs(y2 - y1)
+        sx = 1 if x1 < x2 else -1
+        sy = 1 if y1 < y2 else -1
+        err = dx - dy
 
-    while True:
-        # Desenhar quadrado colorido no canvas (20x20 pixels para cada coordenada)
-        canvas.create_rectangle(x1 * 20, y1 * 20, (x1 + 1) * 20, (y1 + 1) * 20, fill="red")
-        if x1 == x2 and y1 == y2:
-            break
-        e2 = 2 * err
-        if e2 > -dy:
-            err -= dy
-            x1 += sx
-        if e2 < dx:
-            err += dx
-            y1 += sy
+        while True:
+            # Desenhar quadrado colorido no canvas (20x20 pixels para cada coordenada)
+            canvas.create_rectangle(x1 * 20, y1 * 20, (x1 + 1) * 20, (y1 + 1) * 20, fill="red")
+            if x1 == x2 and y1 == y2:
+                break
+            e2 = 2 * err
+            if e2 > -dy:
+                err -= dy
+                x1 += sx
+            if e2 < dx:
+                err += dx
+                y1 += sy
 
+bs = bresenham
 # Função para desenhar a linha entre os pontos selecionados
 def draw_line():
     try:
@@ -39,7 +41,7 @@ def draw_line():
         # Desenhar sistema de coordenadas
         draw_grid(canvas)
         # Desenhar linha usando o algoritmo de Bresenham
-        bresenham_line(x1, y1, x2, y2, canvas)
+        bs.bresenham_line(x1, y1, x2, y2, canvas)
     except ValueError:
         pass  # Ignorar entradas inválidas
 
