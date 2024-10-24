@@ -1,120 +1,155 @@
 import tkinter as tk
 
-# Códigos de região para Cohen-Sutherland
-INSIDE = 0  # 0000
-LEFT = 1    # 0001
-RIGHT = 2   # 0010
-BOTTOM = 4  # 0100
-TOP = 8     # 1000
+# Definindo a área de recorte (por exemplo, uma janela delimitada de 4x4 dentro do sistema de coordenadas 11x11)
+CLIP_X_MIN = -4
+CLIP_X_MAX = 4
+CLIP_Y_MIN = -4
+CLIP_Y_MAX = 4
 
-# Definindo a área de recorte (janela)
-x_min, y_min = 2, 2  # Canto inferior esquerdo da janela de recorte
-x_max, y_max = 8, 8  # Canto superior direito da janela de recorte
-
-# Função para calcular o código de região (outcode) de um ponto
-def compute_outcode(x, y):
-    code = INSIDE
-    if x < x_min:  # à esquerda da janela
-        code |= LEFT
-    elif x > x_max:  # à direita da janela
-        code |= RIGHT
-    if y < y_min:  # abaixo da janela
-        code |= BOTTOM
-    elif y > y_max:  # acima da janela
-        code |= TOP
+# Função para calcular o código do ponto para o algoritmo de recorte Cohen-Sutherland
+def compute_code(x, y):
+    code = 0
+    if x < CLIP_X_MIN:  # Esquerda da janela
+        code |= 1
+    elif x > CLIP_X_MAX:  # Direita da janela
+        code |= 2
+    if y < CLIP_Y_MIN:  # Abaixo da janela
+        code |= 4
+    elif y > CLIP_Y_MAX:  # Acima da janela
+        code |= 8
     return code
 
-# Função para recortar a linha usando o algoritmo de Cohen-Sutherland
-def cohen_sutherland_line_clip(x0, y0, x1, y1):
-    outcode0 = compute_outcode(x0, y0)
-    outcode1 = compute_outcode(x1, y1)
-    accept = False
+# Algoritmo de recorte de linha de Cohen-Sutherland
+def cohen_sutherland_clip(x1, y1, x2, y2):
+    code1 = compute_code(x1, y1)
+    code2 = compute_code(x2, y2)
 
     while True:
-        if outcode0 == 0 and outcode1 == 0:  # Ambos os pontos dentro da janela
-            accept = True
-            break
-        elif outcode0 & outcode1 != 0:  # Ambos os pontos estão fora e na mesma região
-            break
+        if not (code1 | code2):  # Ambos os pontos estão dentro da janela
+            return x1, y1, x2, y2
+        elif code1 & code2:  # Ambos os pontos estão fora da janela
+            return None  # Linha está completamente fora
         else:
-            # Pelo menos um ponto está fora, então encontramos a interseção
-            outcode_out = outcode0 if outcode0 != 0 else outcode1
+            # Um dos pontos está fora da janela
             x, y = 0, 0
+            code_out = code1 if code1 else code2
 
-            # Caso de interseção no topo ou embaixo
-            if outcode_out & TOP:  # Ponto acima da janela
-                if y1 != y0:
-                    x = x0 + (x1 - x0) * (y_max - y0) / (y1 - y0)
-                y = y_max
-            elif outcode_out & BOTTOM:  # Ponto abaixo da janela
-                if y1 != y0:
-                    x = x0 + (x1 - x0) * (y_min - y0) / (y1 - y0)
-                y = y_min
-            # Caso de interseção à direita ou esquerda
-            elif outcode_out & RIGHT:  # Ponto à direita da janela
-                if x1 != x0:
-                    y = y0 + (y1 - y0) * (x_max - x0) / (x1 - x0)
-                x = x_max
-            elif outcode_out & LEFT:  # Ponto à esquerda da janela
-                if x1 != x0:
-                    y = y0 + (y1 - y0) * (x_min - x0) / (x1 - x0)
-                x = x_min
+            # Verifica os limites e ajusta o ponto que está fora da janela
+            if code_out & 8:  # Acima da janela
+                x = x1 + (x2 - x1) * (CLIP_Y_MAX - y1) / (y2 - y1)
+                y = CLIP_Y_MAX
+            elif code_out & 4:  # Abaixo da janela
+                x = x1 + (x2 - x1) * (CLIP_Y_MIN - y1) / (y2 - y1)
+                y = CLIP_Y_MIN
+            elif code_out & 2:  # Direita da janela
+                y = y1 + (y2 - y1) * (CLIP_X_MAX - x1) / (x2 - x1)
+                x = CLIP_X_MAX
+            elif code_out & 1:  # Esquerda da janela
+                y = y1 + (y2 - y1) * (CLIP_X_MIN - x1) / (x2 - x1)
+                x = CLIP_X_MIN
 
-            # Atualiza o ponto fora para a nova interseção e recalcula o código de região
-            if outcode_out == outcode0:
-                x0, y0 = x, y
-                outcode0 = compute_outcode(x0, y0)
+            # Atualiza o ponto que estava fora
+            if code_out == code1:
+                x1, y1 = int(x), int(y)
+                code1 = compute_code(x1, y1)
             else:
-                x1, y1 = x, y
-                outcode1 = compute_outcode(x1, y1)
+                x2, y2 = int(x), int(y)
+                code2 = compute_code(x2, y2)
 
-    if accept:
-        # Desenha a linha recortada (somente a parte dentro da janela)
-        bresenham_line(x0, y0, x1, y1)
+# Função do Algoritmo de Bresenham para desenhar uma linha com recorte
+def bresenham_line(x1, y1, x2, y2, canvas):
+    clipped = cohen_sutherland_clip(x1, y1, x2, y2)
+    if not clipped:
+        return  # Não desenha se a linha está fora da janela
 
-# Função para desenhar uma linha usando o algoritmo de Bresenham
-def bresenham_line(x0, y0, x1, y1):
-    dx = abs(x1 - x0)
-    dy = abs(y1 - y0)
-    sx = 1 if x0 < x1 else -1
-    sy = 1 if y0 < y1 else -1
+    x1, y1, x2, y2 = clipped
+
+    dx = abs(x2 - x1)
+    dy = abs(y2 - y1)
+    sx = 1 if x1 < x2 else -1
+    sy = 1 if y1 < y2 else -1
     err = dx - dy
 
     while True:
-        # Desenhar o ponto
-        canvas.create_rectangle(x0 * 20, y0 * 20, (x0 + 1) * 20, (y0 + 1) * 20, fill="green", outline="green")
-        if x0 == x1 and y0 == y1:
+        # Desenhar quadrado colorido no canvas (20x20 pixels para cada coordenada)
+        canvas.create_rectangle((x1 + 11) * 20, (11 - y1) * 20, (x1 + 11 + 1) * 20, (11 - y1 + 1) * 20, fill="red")
+        if x1 == x2 and y1 == y2:
             break
         e2 = 2 * err
         if e2 > -dy:
             err -= dy
-            x0 += sx
+            x1 += sx
         if e2 < dx:
             err += dx
-            y0 += sy
+            y1 += sy
 
-# Função para desenhar o retângulo da área de recorte (janela)
-def draw_clip_window():
-    for x in range(x_min, x_max + 1):
-        for y in range(y_min, y_max + 1):
-            canvas.create_rectangle(x * 20, y * 20, (x + 1) * 20, (y + 1) * 20, outline="red")
+# Função para desenhar o sistema de coordenadas
+def draw_grid(canvas):
+    # Desenhar eixo x e y
+    canvas.create_line(0, 220, 440, 220, fill="gray")  # Eixo X
+    canvas.create_line(220, 0, 220, 440, fill="gray")  # Eixo Y
+    # Desenhar linhas de grade
+    for i in range(0, 440, 20):
+        canvas.create_line(i, 0, i, 440, fill="lightgray")
+        canvas.create_line(0, i, 440, i, fill="lightgray")
 
-# Função para inicializar a interface gráfica
-def initialize():
-    global canvas
-    window = tk.Tk()
-    window.title("Recorte de Linha - Cohen-Sutherland")
-    
-    canvas = tk.Canvas(window, width=440, height=440)
-    canvas.pack()
+# Função para desenhar a linha entre os pontos selecionados
+def draw_line():
+    try:
+        x1 = int(entry_x1.get())
+        y1 = int(entry_y1.get())
+        x2 = int(entry_x2.get())
+        y2 = int(entry_y2.get())
+        
+        canvas.delete("all")  # Limpar o canvas
+        draw_grid(canvas)  # Desenhar sistema de coordenadas
+        # Desenhar linha usando o algoritmo de Bresenham com recorte
+        bresenham_line(x1, y1, x2, y2, canvas)
+        draw_clip_area(canvas)  # Desenha a área de recorte
+    except ValueError:
+        pass  # Ignorar entradas inválidas
 
-    # Desenhar a área de recorte
-    draw_clip_window()
+# Função para desenhar a área de recorte
+def draw_clip_area(canvas):
+    # Desenha um retângulo delimitando a área de recorte
+    x_min_canvas = (CLIP_X_MIN + 11) * 20
+    y_min_canvas = (11 - CLIP_Y_MAX) * 20
+    x_max_canvas = (CLIP_X_MAX + 11) * 20
+    y_max_canvas = (11 - CLIP_Y_MIN) * 20
 
-    # Exemplo de linha a ser recortada
-    cohen_sutherland_line_clip(-5, -5, 10, 10)  # Uma linha fora da área de recorte
+    canvas.create_rectangle(x_min_canvas, y_min_canvas, x_max_canvas, y_max_canvas, outline="blue", width=2)
 
-    window.mainloop()
+# Interface principal
+root = tk.Tk()
+root.title("Desenho de Linha com Recorte (Bresenham e Cohen-Sutherland)")
 
-# Executar o programa
-initialize()
+# Entrada de coordenadas
+tk.Label(root, text="x1:").grid(row=0, column=0)
+entry_x1 = tk.Entry(root)
+entry_x1.grid(row=0, column=1)
+
+tk.Label(root, text="y1:").grid(row=0, column=2)
+entry_y1 = tk.Entry(root)
+entry_y1.grid(row=0, column=3)
+
+tk.Label(root, text="x2:").grid(row=1, column=0)
+entry_x2 = tk.Entry(root)
+entry_x2.grid(row=1, column=1)
+
+tk.Label(root, text="y2:").grid(row=1, column=2)
+entry_y2 = tk.Entry(root)
+entry_y2.grid(row=1, column=3)
+
+# Botão para desenhar a linha
+draw_button = tk.Button(root, text="Desenhar Linha", command=draw_line)
+draw_button.grid(row=2, column=1, columnspan=2)
+
+# Canvas para desenhar o sistema de coordenadas e a linha
+canvas = tk.Canvas(root, width=440, height=440, bg="white")
+canvas.grid(row=3, column=0, columnspan=4)
+
+# Desenhar a grade e os eixos iniciais
+draw_grid(canvas)
+draw_clip_area(canvas)
+
+root.mainloop()
