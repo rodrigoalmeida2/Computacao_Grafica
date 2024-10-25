@@ -1,4 +1,5 @@
 import tkinter as tk
+from Bresenham import bresenham as bs
 
 # Algoritmo para desenhar uma elipse usando o algoritmo de Midpoint Ellipse
 def draw_ellipse(cx, cy, rx, ry, canvas):
@@ -58,20 +59,10 @@ def draw_ellipse_ui():
         ry = int(entry_ry.get())
         
         canvas.delete("all")  # Limpar o canvas
-        draw_grid(canvas)
+        bs.draw_grid(canvas)
         draw_ellipse(cx, cy, rx, ry, canvas)
     except ValueError:
         pass  # Ignorar entradas inválidas
-
-# Função para desenhar a grade e os eixos de coordenadas
-def draw_grid(canvas):
-    # Eixo x e y
-    canvas.create_line(0, 220, 440, 220, fill="gray")  # Eixo X
-    canvas.create_line(220, 0, 220, 440, fill="gray")  # Eixo Y
-    # Linhas da grade
-    for i in range(0, 440, 20):
-        canvas.create_line(i, 0, i, 440, fill="lightgray")
-        canvas.create_line(0, i, 440, i, fill="lightgray")
 
 # Interface gráfica
 root = tk.Tk()
@@ -103,6 +94,6 @@ canvas = tk.Canvas(root, width=440, height=440, bg="white")
 canvas.grid(row=3, column=0, columnspan=4)
 
 # Desenhar a grade inicial
-draw_grid(canvas)
+bs.draw_grid(canvas)
 
 root.mainloop()

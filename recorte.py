@@ -1,4 +1,5 @@
 import tkinter as tk
+from Bresenham import bresenham as bs
 
 # Definindo a área de recorte (por exemplo, uma janela delimitada de 4x4 dentro do sistema de coordenadas 11x11)
 CLIP_X_MIN = -4
@@ -83,16 +84,6 @@ def bresenham_line(x1, y1, x2, y2, canvas):
             err += dx
             y1 += sy
 
-# Função para desenhar o sistema de coordenadas
-def draw_grid(canvas):
-    # Desenhar eixo x e y
-    canvas.create_line(0, 220, 440, 220, fill="gray")  # Eixo X
-    canvas.create_line(220, 0, 220, 440, fill="gray")  # Eixo Y
-    # Desenhar linhas de grade
-    for i in range(0, 440, 20):
-        canvas.create_line(i, 0, i, 440, fill="lightgray")
-        canvas.create_line(0, i, 440, i, fill="lightgray")
-
 # Função para desenhar a linha entre os pontos selecionados
 def draw_line():
     try:
@@ -102,7 +93,7 @@ def draw_line():
         y2 = int(entry_y2.get())
         
         canvas.delete("all")  # Limpar o canvas
-        draw_grid(canvas)  # Desenhar sistema de coordenadas
+        bs.draw_grid(canvas)  # Desenhar sistema de coordenadas
         # Desenhar linha usando o algoritmo de Bresenham com recorte
         bresenham_line(x1, y1, x2, y2, canvas)
         draw_clip_area(canvas)  # Desenha a área de recorte
@@ -149,7 +140,7 @@ canvas = tk.Canvas(root, width=440, height=440, bg="white")
 canvas.grid(row=3, column=0, columnspan=4)
 
 # Desenhar a grade e os eixos iniciais
-draw_grid(canvas)
+bs.draw_grid(canvas)
 draw_clip_area(canvas)
 
 root.mainloop()

@@ -40,7 +40,7 @@ def perspective_projection(vertices, d=500):
 # Função para desenhar a projeção ortogonal
 def draw_orthogonal():
     canvas.delete("all")  # Limpar o canvas
-    draw_grid(canvas)  # Redesenha a grade
+    bs.draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
     ortho_vertices = orthogonal_projection(vertices)
     draw_polygon(ortho_vertices, canvas, "blue")
@@ -48,7 +48,7 @@ def draw_orthogonal():
 # Função para desenhar a projeção oblíqua
 def draw_oblique():
     canvas.delete("all")  # Limpar o canvas
-    draw_grid(canvas)  # Redesenha a grade
+    bs.draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
     oblique_vertices = oblique_projection(vertices)
     draw_polygon(oblique_vertices, canvas, "green")
@@ -56,18 +56,10 @@ def draw_oblique():
 # Função para desenhar a projeção em perspectiva
 def draw_perspective():
     canvas.delete("all")  # Limpar o canvas
-    draw_grid(canvas)  # Redesenha a grade
+    bs.draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
     perspective_vertices = perspective_projection(vertices)
     draw_polygon(perspective_vertices, canvas, "red")
-
-# Função para desenhar a grade e os eixos
-def draw_grid(canvas):
-    canvas.create_line(0, 220, 440, 220, fill="gray")  # Eixo X
-    canvas.create_line(220, 0, 220, 440, fill="gray")  # Eixo Y
-    for i in range(0, 440, 20):
-        canvas.create_line(i, 0, i, 440, fill="lightgray")
-        canvas.create_line(0, i, 440, i, fill="lightgray")
 
 # Interface principal
 root = tk.Tk()
@@ -95,6 +87,6 @@ canvas = tk.Canvas(root, width=440, height=440, bg="white")
 canvas.grid(row=2, column=0, columnspan=4)
 
 # Desenhar a grade e os eixos iniciais
-draw_grid(canvas)
+bs.draw_grid(canvas)
 
 root.mainloop()

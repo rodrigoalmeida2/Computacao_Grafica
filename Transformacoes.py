@@ -5,7 +5,7 @@ from Bresenham import bresenham as bs
 # Função para desenhar o polígono com os vértices especificados, usando Bresenham para as arestas
 def draw_polygon(vertices, canvas, color="blue"):
     canvas.delete("all")
-    draw_grid(canvas)  # Redesenha a grade
+    bs.draw_grid(canvas)  # Redesenha a grade
     for i in range(len(vertices)):
         x1, y1 = vertices[i]
         x2, y2 = vertices[(i + 1) % len(vertices)]
@@ -94,14 +94,6 @@ def apply_scale():
     except ValueError:
         pass
 
-# Função para desenhar a grade e os eixos
-def draw_grid(canvas):
-    canvas.create_line(0, 220, 440, 220, fill="gray")  # Eixo X
-    canvas.create_line(220, 0, 220, 440, fill="gray")  # Eixo Y
-    for i in range(0, 440, 20):
-        canvas.create_line(i, 0, i, 440, fill="lightgray")
-        canvas.create_line(0, i, 440, i, fill="lightgray")
-
 # Função para desenhar o polígono inicial
 def draw_initial_polygon():
     vertices = get_polygon_coordinates()
@@ -176,6 +168,6 @@ canvas = tk.Canvas(root, width=440, height=440, bg="white")
 canvas.grid(row=12, column=0, columnspan=4)
 
 # Desenhar a grade e os eixos iniciais
-draw_grid(canvas)
+bs.draw_grid(canvas)
 
 root.mainloop()

@@ -8,7 +8,7 @@ def draw_polygon():
         points = [(int(p.split(',')[0]) + 11, 11 - int(p.split(',')[1])) for p in points_input.split(';')]
 
         canvas.delete("all")  # Limpar o canvas
-        draw_grid(canvas)
+        bs.draw_grid(canvas)
 
         # Desenhar as bordas do polígono
         for i in range(len(points)):
@@ -84,17 +84,6 @@ def scanline_fill():
     except ValueError:
         pass  # Ignora entradas inválidas
 
-
-# Função para desenhar a grade e os eixos de coordenadas
-def draw_grid(canvas):
-    # Eixo x e y
-    canvas.create_line(0, 220, 440, 220, fill="gray")  # Eixo X
-    canvas.create_line(220, 0, 220, 440, fill="gray")  # Eixo Y
-    # Linhas da grade
-    for i in range(0, 440, 20):
-        canvas.create_line(i, 0, i, 440, fill="lightgray")
-        canvas.create_line(0, i, 440, i, fill="lightgray")
-
 # Interface gráfica
 root = tk.Tk()
 root.title("Preenchimento de Polígonos")
@@ -124,7 +113,7 @@ canvas = tk.Canvas(root, width=440, height=440, bg="white")
 canvas.grid(row=5, column=0, columnspan=2)
 
 # Desenhar a grade inicial
-draw_grid(canvas)
+bs.draw_grid(canvas)
 
 root.mainloop()
 #-4,-4; 4,-4; 4,4; -4,4; -4,-4
