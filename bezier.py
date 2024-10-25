@@ -6,7 +6,7 @@ from Bresenham import bresenham as bs
 # Função para desenhar a curva de Bezier de grau 2 usando Bresenham
 def draw_bezier_2(canvas, p0, p1, p2):
     canvas.delete("all")
-    draw_grid(canvas)  # Redesenha a grade
+    bs.draw_grid(canvas)  # Redesenha a grade
 
     previous_point = None
     for t in np.linspace(0, 1, 100):
@@ -22,7 +22,7 @@ def draw_bezier_2(canvas, p0, p1, p2):
 # Função para desenhar a curva de Bezier de grau 3 usando Bresenham
 def draw_bezier_3(canvas, p0, p1, p2, p3):
     canvas.delete("all")
-    draw_grid(canvas)  # Redesenha a grade
+    bs.draw_grid(canvas)  # Redesenha a grade
 
     previous_point = None
     for t in np.linspace(0, 1, 100):
@@ -34,16 +34,6 @@ def draw_bezier_3(canvas, p0, p1, p2, p3):
             # Usa Bresenham para conectar os pontos da curva
             bs.bresenham_line(previous_point[0], previous_point[1], x, y, canvas)
         previous_point = (x, y)
-
-# Função para desenhar o sistema de coordenadas
-def draw_grid(canvas):
-    # Desenhar eixo x e y
-    canvas.create_line(0, 220, 440, 220, fill="gray")  # Eixo X
-    canvas.create_line(220, 0, 220, 440, fill="gray")  # Eixo Y
-    # Desenhar linhas de grade
-    for i in range(0, 440, 20):
-        canvas.create_line(i, 0, i, 440, fill="lightgray")
-        canvas.create_line(0, i, 440, i, fill="lightgray")
 
 # Função para desenhar a curva de Bezier de grau 2 usando os valores da entrada
 def draw_curve_2():
@@ -107,6 +97,6 @@ canvas = Canvas(root, width=440, height=440, bg="white")
 canvas.grid(row=6, column=0, columnspan=3)
 
 # Desenhar a grade inicial
-draw_grid(canvas)
+bs.draw_grid(canvas)
 
 root.mainloop()
