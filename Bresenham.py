@@ -26,4 +26,14 @@ class bresenham:
             if e2 < dx:
                 err += dx
                 y1 += sy
+    
+    # Função para desenhar o sistema de coordenadas
+    def draw_grid(canvas):
+        # Desenhar eixo x e y
+        canvas.create_line(0, 220, 440, 220, fill="gray")  # Eixo X
+        canvas.create_line(220, 0, 220, 440, fill="gray")  # Eixo Y
+        # Desenhar linhas de grade
+        for i in range(0, 440, 20):
+            canvas.create_line(i, 0, i, 440, fill="lightgray")
+            canvas.create_line(0, i, 440, i, fill="lightgray")
 

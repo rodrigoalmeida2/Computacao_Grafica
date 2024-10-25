@@ -11,21 +11,11 @@ def draw_line():
         
         canvas.delete("all")  # Limpar o canvas
         # Desenhar sistema de coordenadas
-        draw_grid(canvas)
+        bs.draw_grid(canvas)
         # Desenhar linha usando o algoritmo de Bresenham
         bs.bresenham_line(x1, y1, x2, y2, canvas)
     except ValueError:
         pass  # Ignorar entradas inválidas
-
-# Função para desenhar o sistema de coordenadas
-def draw_grid(canvas):
-    # Desenhar eixo x e y
-    canvas.create_line(0, 220, 440, 220, fill="gray")  # Eixo X
-    canvas.create_line(220, 0, 220, 440, fill="gray")  # Eixo Y
-    # Desenhar linhas de grade
-    for i in range(0, 440, 20):
-        canvas.create_line(i, 0, i, 440, fill="lightgray")
-        canvas.create_line(0, i, 440, i, fill="lightgray")
 
 # Interface principal
 root = tk.Tk()
@@ -57,6 +47,6 @@ canvas = tk.Canvas(root, width=440, height=440, bg="white")
 canvas.grid(row=3, column=0, columnspan=4)
 
 # Desenhar a grade e os eixos iniciais
-draw_grid(canvas)
+bs.draw_grid(canvas)
 
 root.mainloop()
