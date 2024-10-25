@@ -48,7 +48,7 @@ def apply_rotation():
             # Arredondar para evitar problemas de precisão e adicionar ao novo conjunto de vértices
             rotated_vertices.append((round(final_x), round(final_y)))
 
-        draw_polygon(rotated_vertices, canvas, "red")
+        draw_polygon(rotated_vertices, "red")
     except ValueError:
         pass
 
@@ -60,7 +60,7 @@ def apply_translation():
         vertices = get_polygon_coordinates()
 
         translated_vertices = [(x + dx, y + dy) for x, y in vertices]
-        draw_polygon(translated_vertices, canvas, "green")
+        draw_polygon(translated_vertices, "green")
     except ValueError:
         pass
 
@@ -90,14 +90,14 @@ def apply_scale():
             # Arredondar para garantir que caia em coordenadas inteiras
             scaled_vertices.append((round(final_x), round(final_y)))
 
-        draw_polygon(scaled_vertices, canvas, "purple")
+        draw_polygon(scaled_vertices, "purple")
     except ValueError:
         pass
 
 # Função para desenhar o polígono inicial
 def draw_initial_polygon():
     vertices = get_polygon_coordinates()
-    draw_polygon(vertices, canvas, "blue")
+    draw_polygon(vertices, "blue")
 
 # Interface principal
 root = tk.Tk()

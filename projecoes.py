@@ -7,7 +7,7 @@ def draw_polygon(vertices, color="blue"):
     for i in range(len(vertices)):
         x1, y1 = vertices[i]
         x2, y2 = vertices[(i + 1) % len(vertices)]
-        bs.bresenham_line(round(x1), round(y1), round(x2), round(y2), canvas, color)
+        bs.bresenham_line(round(x1), round(y1), round(x2), round(y2), canvas)
 
 # Função para capturar as coordenadas dos vértices fornecidos (em 3D)
 def get_polygon_coordinates_3d():
@@ -43,7 +43,7 @@ def draw_orthogonal():
     bs.draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
     ortho_vertices = orthogonal_projection(vertices)
-    draw_polygon(ortho_vertices, canvas, "blue")
+    draw_polygon(ortho_vertices, "blue")
 
 # Função para desenhar a projeção oblíqua
 def draw_oblique():
@@ -51,7 +51,7 @@ def draw_oblique():
     bs.draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
     oblique_vertices = oblique_projection(vertices)
-    draw_polygon(oblique_vertices, canvas, "green")
+    draw_polygon(oblique_vertices, "green")
 
 # Função para desenhar a projeção em perspectiva
 def draw_perspective():
@@ -59,7 +59,7 @@ def draw_perspective():
     bs.draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
     perspective_vertices = perspective_projection(vertices)
-    draw_polygon(perspective_vertices, canvas, "red")
+    draw_polygon(perspective_vertices, "red")
 
 # Interface principal
 root = tk.Tk()
