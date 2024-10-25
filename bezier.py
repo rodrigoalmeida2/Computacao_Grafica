@@ -4,7 +4,14 @@ import numpy as np
 from Bresenham import bresenham as bs
 
 # Função para desenhar a curva de Bezier de grau 2 usando Bresenham
-def draw_bezier_2(canvas, p0, p1, p2):
+def draw_bezier_2():
+    try:
+        p0 = (int(entry_x0.get()), int(entry_y0.get()))
+        p1 = (int(entry_x1.get()), int(entry_y1.get()))
+        p2 = (int(entry_x2.get()), int(entry_y2.get()))
+    except ValueError:
+        pass  # Ignora entradas inválidas
+
     canvas.delete("all")
     bs.draw_grid(canvas)  # Redesenha a grade
 
@@ -20,7 +27,14 @@ def draw_bezier_2(canvas, p0, p1, p2):
         previous_point = (x, y)
 
 # Função para desenhar a curva de Bezier de grau 3 usando Bresenham
-def draw_bezier_3(canvas, p0, p1, p2, p3):
+def draw_bezier_3():
+    try:
+        p0 = (int(entry_x0.get()), int(entry_y0.get()))
+        p1 = (int(entry_x1.get()), int(entry_y1.get()))
+        p2 = (int(entry_x2.get()), int(entry_y2.get()))
+        p3 = (int(entry_x3.get()), int(entry_y3.get()))
+    except ValueError:
+        pass  # Ignora entradas inválidas
     canvas.delete("all")
     bs.draw_grid(canvas)  # Redesenha a grade
 
@@ -34,27 +48,6 @@ def draw_bezier_3(canvas, p0, p1, p2, p3):
             # Usa Bresenham para conectar os pontos da curva
             bs.bresenham_line(previous_point[0], previous_point[1], x, y, canvas)
         previous_point = (x, y)
-
-# Função para desenhar a curva de Bezier de grau 2 usando os valores da entrada
-def draw_curve_2():
-    try:
-        p0 = (int(entry_x0.get()), int(entry_y0.get()))
-        p1 = (int(entry_x1.get()), int(entry_y1.get()))
-        p2 = (int(entry_x2.get()), int(entry_y2.get()))
-        draw_bezier_2(canvas, p0, p1, p2)
-    except ValueError:
-        pass  # Ignora entradas inválidas
-
-# Função para desenhar a curva de Bezier de grau 3 usando os valores da entrada
-def draw_curve_3():
-    try:
-        p0 = (int(entry_x0.get()), int(entry_y0.get()))
-        p1 = (int(entry_x1.get()), int(entry_y1.get()))
-        p2 = (int(entry_x2.get()), int(entry_y2.get()))
-        p3 = (int(entry_x3.get()), int(entry_y3.get()))
-        draw_bezier_3(canvas, p0, p1, p2, p3)
-    except ValueError:
-        pass  # Ignora entradas inválidas
 
 # Interface principal
 root = tk.Tk()
@@ -86,10 +79,10 @@ entry_y3 = tk.Entry(root)
 entry_y3.grid(row=3, column=2)
 
 # Botões para desenhar curvas
-button_curve_2 = tk.Button(root, text="Desenhar Bezier Grau 2", command=draw_curve_2)
+button_curve_2 = tk.Button(root, text="Desenhar Bezier Grau 2", command=draw_bezier_2)
 button_curve_2.grid(row=4, column=0, columnspan=3)
 
-button_curve_3 = tk.Button(root, text="Desenhar Bezier Grau 3", command=draw_curve_3)
+button_curve_3 = tk.Button(root, text="Desenhar Bezier Grau 3", command=draw_bezier_3)
 button_curve_3.grid(row=5, column=0, columnspan=3)
 
 # Canvas para desenhar a curva
