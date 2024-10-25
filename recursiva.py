@@ -19,7 +19,7 @@ def draw_polygon():
         pass  # Ignorar entradas inválidas
 
 # Função para preenchimento recursivo (Flood Fill)
-def flood_fill(x, y, canvas):
+def flood_fill(x, y):
     # Converte para coordenadas da grade
     pixel = canvas.find_overlapping(x * 20 + 10, y * 20 + 10, x * 20 + 11, y * 20 + 11)
     if pixel:

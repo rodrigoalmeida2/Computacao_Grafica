@@ -2,7 +2,7 @@ import tkinter as tk
 from Bresenham import bresenham as bs
 
 # Algoritmo para desenhar uma elipse usando o algoritmo de Midpoint Ellipse
-def draw_ellipse(cx, cy, rx, ry, canvas):
+def draw_ellipse(cx, cy, rx, ry):
     # Ajuste para o centro (cx, cy) no sistema de coordenadas
     cx = cx + 11
     cy = 11 - cy
@@ -43,7 +43,7 @@ def draw_ellipse(cx, cy, rx, ry, canvas):
             p += rx2 - py + px
 
 # Função auxiliar para desenhar os 4 pontos simétricos da elipse
-def draw_ellipse_points(cx, cy, x, y, canvas):
+def draw_ellipse_points(cx, cy, x, y):
     points = [
         (cx + x, cy + y), (cx - x, cy + y), (cx + x, cy - y), (cx - x, cy - y)
     ]

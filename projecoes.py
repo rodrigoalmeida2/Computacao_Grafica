@@ -3,7 +3,7 @@ import math
 from Bresenham import bresenham as bs
 
 # Função para desenhar o polígono com os vértices especificados, usando Bresenham para as arestas
-def draw_polygon(vertices, canvas, color="blue"):
+def draw_polygon(vertices, color="blue"):
     for i in range(len(vertices)):
         x1, y1 = vertices[i]
         x2, y2 = vertices[(i + 1) % len(vertices)]
