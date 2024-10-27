@@ -3,13 +3,13 @@ import math
 from Bresenham import bresenham as bs
 
 # Função para desenhar o polígono com os vértices especificados, usando Bresenham para as arestas
-def draw_polygon(vertices, color="blue"):
+def draw_polygon(vertices):
     canvas.delete("all")
     bs.draw_grid(canvas)  # Redesenha a grade
     for i in range(len(vertices)):
         x1, y1 = vertices[i]
         x2, y2 = vertices[(i + 1) % len(vertices)]
-        bs.bresenham_line(round(x1), round(y1), round(x2), round(y2), canvas, color)
+        bs.bresenham_line(round(x1), round(y1), round(x2), round(y2), canvas)
 
 # Função para capturar as coordenadas dos vértices fornecidos
 def get_polygon_coordinates():
@@ -48,7 +48,7 @@ def apply_rotation():
             # Arredondar para evitar problemas de precisão e adicionar ao novo conjunto de vértices
             rotated_vertices.append((round(final_x), round(final_y)))
 
-        draw_polygon(rotated_vertices, "red")
+        draw_polygon(rotated_vertices)
     except ValueError:
         pass
 
