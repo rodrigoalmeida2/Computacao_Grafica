@@ -36,13 +36,6 @@ def show_binary():
         binary_image = gray_image.point(lambda p: 255 if p > 128 else 0)  # Binarização simples
         show_image(binary_image)
 
-# Função para remover ruído usando filtro de média
-def remove_noise():
-    if original_image:
-        # Aplica um filtro de média (suavização) para remover ruído
-        noise_free_image = original_image.filter(ImageFilter.MedianFilter(size=3))
-        show_image(noise_free_image)
-
 
 # Interface principal
 root = tk.Tk()
@@ -65,9 +58,6 @@ gray_button.grid(row=2, column=1)
 
 binary_button = tk.Button(root, text="Binária", command=show_binary)
 binary_button.grid(row=3, column=1)
-
-noise_button = tk.Button(root, text="Remover Ruído", command=remove_noise)
-noise_button.grid(row=4, column=1)
 
 # Inicializa a variável da imagem
 original_image = None

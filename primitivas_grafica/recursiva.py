@@ -58,8 +58,8 @@ def is_point_inside_polygon(x, y, points):
 
     return inside
 
+# Preenche a área usando o algoritmo Flood Fill, somente se o ponto estiver dentro do polígono
 def flood_fill(x, y, points):
-    """Preenche a área usando o algoritmo Flood Fill, somente se o ponto estiver dentro do polígono."""
     # Verifica se a coordenada inicial está dentro do polígono
     if not is_point_inside_polygon(x, y, points):
         return  # Não preenche se estiver fora do polígono
