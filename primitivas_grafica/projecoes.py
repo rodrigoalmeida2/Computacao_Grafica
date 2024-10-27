@@ -3,7 +3,7 @@ import math
 from Bresenham import bresenham as bs
 
 # Função para desenhar o polígono com os vértices especificados, usando Bresenham para as arestas
-def draw_polygon(vertices, color="blue"):
+def draw_polygon(vertices):
     for i in range(len(vertices)):
         x1, y1 = vertices[i]
         x2, y2 = vertices[(i + 1) % len(vertices)]
@@ -43,7 +43,7 @@ def draw_orthogonal():
     bs.draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
     ortho_vertices = orthogonal_projection(vertices)
-    draw_polygon(ortho_vertices, "blue")
+    draw_polygon(ortho_vertices)
 
 # Função para desenhar a projeção oblíqua
 def draw_oblique():
@@ -51,7 +51,7 @@ def draw_oblique():
     bs.draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
     oblique_vertices = oblique_projection(vertices)
-    draw_polygon(oblique_vertices, "green")
+    draw_polygon(oblique_vertices)
 
 # Função para desenhar a projeção em perspectiva
 def draw_perspective():
@@ -59,7 +59,7 @@ def draw_perspective():
     bs.draw_grid(canvas)  # Redesenha a grade
     vertices = get_polygon_coordinates_3d()
     perspective_vertices = perspective_projection(vertices)
-    draw_polygon(perspective_vertices, "red")
+    draw_polygon(perspective_vertices)
 
 # Interface principal
 root = tk.Tk()

@@ -60,7 +60,7 @@ def apply_translation():
         vertices = get_polygon_coordinates()
 
         translated_vertices = [(x + dx, y + dy) for x, y in vertices]
-        draw_polygon(translated_vertices, "green")
+        draw_polygon(translated_vertices)
     except ValueError:
         pass
 
@@ -75,6 +75,7 @@ def apply_scale():
 
         scaled_vertices = []
         for x, y in vertices:
+            
             # Transladar o ponto de pivô para a origem
             translated_x = x - scale_pivot_x
             translated_y = y - scale_pivot_y
@@ -90,14 +91,14 @@ def apply_scale():
             # Arredondar para garantir que caia em coordenadas inteiras
             scaled_vertices.append((round(final_x), round(final_y)))
 
-        draw_polygon(scaled_vertices, "purple")
+        draw_polygon(scaled_vertices)
     except ValueError:
         pass
 
 # Função para desenhar o polígono inicial
 def draw_initial_polygon():
     vertices = get_polygon_coordinates()
-    draw_polygon(vertices, "blue")
+    draw_polygon(vertices)
 
 # Interface principal
 root = tk.Tk()

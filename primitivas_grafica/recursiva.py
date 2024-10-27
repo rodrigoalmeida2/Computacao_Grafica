@@ -1,6 +1,27 @@
 import tkinter as tk
 from Bresenham import bresenham as bs
 
+
+# Algoritmo de Bresenham para desenhar linhas
+def bresenham(x0, y0, x1, y1, canvas):
+    dx = abs(x1 - x0)
+    dy = abs(y1 - y0)
+    sx = 1 if x0 < x1 else -1
+    sy = 1 if y0 < y1 else -1
+    err = dx - dy
+
+    while True:
+        canvas.create_rectangle(x0 * 20, y0 * 20, (x0 + 1) * 20, (y0 + 1) * 20, fill="red", outline="black")
+        if x0 == x1 and y0 == y1:
+            break
+        e2 = 2 * err
+        if e2 > -dy:
+            err -= dy
+            x0 += sx
+        if e2 < dx:
+            err += dx
+            y0 += sy
+
 # Função para desenhar o polígono usando bresenham
 def draw_polygon():
     try:
@@ -14,13 +35,35 @@ def draw_polygon():
         for i in range(len(points)):
             x0, y0 = points[i]
             x1, y1 = points[(i + 1) % len(points)]  # Para fechar o polígono
-            bs.bresenham(x0, y0, x1, y1, canvas)
+            bresenham(x0, y0, x1, y1, canvas)
     except ValueError:
-        pass  # Ignorar entradas inválidas
+        print("Entrada inválida! Verifique o formato dos pontos.")
 
-# Função para preenchimento recursivo (Flood Fill)
-def flood_fill(x, y):
-    # Converte para coordenadas da grade
+def is_point_inside_polygon(x, y, points):
+    """Verifica se um ponto está dentro do polígono usando o algoritmo de ponto de feixe."""
+    n = len(points)
+    inside = False
+
+    p1x, p1y = points[0]
+    for i in range(n + 1):
+        p2x, p2y = points[i % n]
+        if y > min(p1y, p2y):
+            if y <= max(p1y, p2y):
+                if x <= max(p1x, p2x):
+                    if p1y != p2y:
+                        xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                    if p1x == p2x or x <= xinters:
+                        inside = not inside
+        p1x, p1y = p2x, p2y
+
+    return inside
+
+def flood_fill(x, y, points):
+    """Preenche a área usando o algoritmo Flood Fill, somente se o ponto estiver dentro do polígono."""
+    # Verifica se a coordenada inicial está dentro do polígono
+    if not is_point_inside_polygon(x, y, points):
+        return  # Não preenche se estiver fora do polígono
+
     pixel = canvas.find_overlapping(x * 20 + 10, y * 20 + 10, x * 20 + 11, y * 20 + 11)
     if pixel:
         return  # Não preenche fora do polígono ou onde já há preenchimento
@@ -28,61 +71,58 @@ def flood_fill(x, y):
     canvas.create_rectangle(x * 20, y * 20, (x + 1) * 20, (y + 1) * 20, fill="blue")
 
     # Chama recursivamente para os vizinhos
-    flood_fill(x + 1, y, canvas)
-    flood_fill(x - 1, y, canvas)
-    flood_fill(x, y + 1, canvas)
-    flood_fill(x, y - 1, canvas)
+    flood_fill(x + 1, y, points)
+    flood_fill(x - 1, y, points)
+    flood_fill(x, y + 1, points)
+    flood_fill(x, y - 1, points)
 
-# Função para preencher o polígono com flood fill
+# Função para iniciar o Flood Fill com ponto especificado
 def apply_flood_fill():
     try:
         x, y = map(int, entry_point.get().split(','))
         x += 11
         y = 11 - y
-        flood_fill(x, y, canvas)
+        points_input = entry_polygon.get()
+        points = [(int(p.split(',')[0]) + 11, 11 - int(p.split(',')[1])) for p in points_input.split(';')]
+        flood_fill(x, y, points)
     except ValueError:
-        pass
+        print("Entrada inválida! Use o formato X,Y.")
 
-# Função para preencher o polígono com algoritmo de varredura (Scanline)
 def scanline_fill():
     try:
-        points_input = entry_polygon.get()  # Exemplo de entrada: "-5,0; 5,0; 3,3; 0,7; -3,3"
+        points_input = entry_polygon.get()
         points = [(int(p.split(',')[0]) + 11, 11 - int(p.split(',')[1])) for p in points_input.split(';')]
 
-        # Desenha o polígono
-        draw_polygon()
+        draw_polygon()  # Desenhar as bordas do polígono
 
-        # Encontrar o limite superior e inferior do polígono
+        # Encontrar os limites vertical e horizontal
         min_y = min(y for _, y in points)
         max_y = max(y for _, y in points)
 
         # Preenchimento por varredura linha por linha
-        for y in range(min_y, max_y + 1):
+        for y in range(min_y + 1, max_y):  # Começar do min_y + 1 e ir até max_y - 1
             intersections = []
             for i in range(len(points)):
                 x0, y0 = points[i]
                 x1, y1 = points[(i + 1) % len(points)]
 
-                # Verifica se a linha de varredura cruza a aresta
                 if y0 == y1:  # Ignora linhas horizontais
                     continue
                 if y0 < y1:
-                    x0, y0, x1, y1 = x1, y1, x0, y0  # Garante que estamos subindo na varredura
-                if y > min(y0, y1) and y <= max(y0, y1):  # A linha de varredura cruza essa aresta
-                    # Calcula o ponto de interseção
+                    x0, y0, x1, y1 = x1, y1, x0, y0
+                if y > min(y0, y1) and y < max(y0, y1):  # Verifica interseção
                     x_intersection = int(x0 + (y - y0) * (x1 - x0) / (y1 - y0))
                     intersections.append(x_intersection)
 
-            # Ordena as interseções e preenche os pixels entre pares de interseções
             intersections.sort()
             for i in range(0, len(intersections), 2):
                 if i + 1 < len(intersections):
                     x_start, x_end = intersections[i], intersections[i + 1]
-                    for x in range(x_start, x_end + 1):
-                        canvas.create_rectangle(x * 20, y * 20, (x + 1) * 20, (y + 1) * 20, fill="green")
+                    for x in range(x_start + 1, x_end):  # Evita preencher a borda
+                        canvas.create_rectangle(x * 20, y * 20, (x + 1) * 20, (y + 1) * 20, fill="blue")
 
     except ValueError:
-        pass  # Ignora entradas inválidas
+        print("Entrada inválida! Verifique o formato dos pontos.")
 
 # Interface gráfica
 root = tk.Tk()
@@ -116,4 +156,3 @@ canvas.grid(row=5, column=0, columnspan=2)
 bs.draw_grid(canvas)
 
 root.mainloop()
-#-4,-4; 4,-4; 4,4; -4,4; -4,-4
