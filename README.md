@@ -3,10 +3,11 @@
 Trabalho final da matéria de Computação Gráfica, implementando algoritmos de Síntese de Imagens e Processamento de Imagem
 
 ##  Para utilizar este projeto:
+
 1. Git Clone
-```bash
-  git clone https://github.com/rodrigoalmeida2/Computacao_Grafica.git
-```
+    ```bash
+      git clone https://github.com/rodrigoalmeida2/Computacao_Grafica.git
+    ```
 2. Crie um ambiente virtual
    ```bash
    python -m venv _sua_venv_
