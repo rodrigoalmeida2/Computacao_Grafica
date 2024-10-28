@@ -88,6 +88,7 @@ def apply_flood_fill():
     except ValueError:
         print("Entrada inválida! Use o formato X,Y.")
 
+# Varredura
 def scanline_fill():
     try:
         points_input = entry_polygon.get()

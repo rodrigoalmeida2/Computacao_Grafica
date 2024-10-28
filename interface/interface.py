@@ -21,9 +21,6 @@ root.title("Executar Scripts do Projeto")
 button_script1 = tk.Button(root, text="Bresennham", command=lambda: run_script('primitivas_grafica/Linha_Bresenham.py'))
 button_script1.pack(pady=10)
 
-button_script2 = tk.Button(root, text="Círculo e Elipse", command=lambda: run_script('primitivas_grafica/Circulo.py'))
-button_script2.pack(pady=10)
-
 button_script3 = tk.Button(root, text="Polilinha e Preenchimento Recursivo", command=lambda: run_script('primitivas_grafica/recursiva.py'))
 button_script3.pack(pady=10)
 
